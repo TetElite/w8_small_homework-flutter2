@@ -20,18 +20,37 @@ class LibraryContent extends StatelessWidget {
           SizedBox(height: 16),
           Text("Library", style: AppTextStyles.heading),
           SizedBox(height: 50),
-      
+
           Expanded(
-            child: ListView.builder(
-              itemCount: mv.songs.length,
-              itemBuilder: (context, index) => SongTile(
-                song: mv.songs[index],
-                isPlaying: mv.isSongPlaying(mv.songs[index]) ,
-                onTap: () {
-                  mv.start(mv.songs[index]);
-                },
-              ),
-            ),
+            child: () {
+              // Loading state
+              if (mv.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // Error state
+              if (mv.error != null) {
+                return Center(
+                  child: Text(
+                    'Error: ${mv.error}',
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
+
+              // Success state
+              return ListView.builder(
+                itemCount: mv.songs!.length,
+                itemBuilder: (context, index) => SongTile(
+                  song: mv.songs![index],
+                  isPlaying: mv.isSongPlaying(mv.songs![index]),
+                  onTap: () {
+                    mv.start(mv.songs![index]);
+                  },
+                ),
+              );
+            }(),
           ),
         ],
       ),
